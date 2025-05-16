@@ -1,0 +1,420 @@
+2025-05-09 16:45:46.361 +03 [9850] LOG:  starting PostgreSQL 14.2 on aarch64-apple-darwin20.6.0, compiled by Apple clang version 12.0.5 (clang-1205.0.22.9), 64-bit
+2025-05-09 16:45:46.363 +03 [9850] LOG:  listening on IPv6 address "::1", port 5432
+2025-05-09 16:45:46.363 +03 [9850] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-05-09 16:45:46.363 +03 [9850] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2025-05-09 16:45:46.365 +03 [9851] LOG:  database system was shut down at 2025-05-09 16:45:46 +03
+2025-05-09 16:45:46.366 +03 [9850] LOG:  database system is ready to accept connections
+2025-05-09 16:47:57.936 +03 [11270] FATAL:  role "camogram" does not exist
+2025-05-10 23:36:46.294 +03 [8622] FATAL:  role "camogram" does not exist
+2025-05-10 23:37:02.709 +03 [8835] FATAL:  role "camogram" does not exist
+2025-05-11 16:01:47.338 +03 [13993] ERROR:  syntax error at or near "CREATE" at character 28
+2025-05-11 16:01:47.338 +03 [13993] STATEMENT:  drop table if exists rooms
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,"test");
+	insert into rooms (v,w) values (148,"test2");
+	insert into rooms (v,w) values (188,"test3");
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:01:48.513 +03 [13993] ERROR:  syntax error at or near "CREATE" at character 28
+2025-05-11 16:01:48.513 +03 [13993] STATEMENT:  drop table if exists rooms
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,"test");
+	insert into rooms (v,w) values (148,"test2");
+	insert into rooms (v,w) values (188,"test3");
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:01:49.286 +03 [13993] ERROR:  syntax error at or near "CREATE" at character 28
+2025-05-11 16:01:49.286 +03 [13993] STATEMENT:  drop table if exists rooms
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,"test");
+	insert into rooms (v,w) values (148,"test2");
+	insert into rooms (v,w) values (188,"test3");
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:01:59.936 +03 [13993] ERROR:  column "test" does not exist at character 312
+2025-05-11 16:01:59.936 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,"test");
+	insert into rooms (v,w) values (148,"test2");
+	insert into rooms (v,w) values (188,"test3");
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:02:01.844 +03 [13993] ERROR:  column "test" does not exist at character 312
+2025-05-11 16:02:01.844 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,"test");
+	insert into rooms (v,w) values (148,"test2");
+	insert into rooms (v,w) values (188,"test3");
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:03:24.058 +03 [13993] ERROR:  syntax error at or near "end" at character 485
+2025-05-11 16:03:24.058 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:03:24.770 +03 [13993] ERROR:  syntax error at or near "end" at character 485
+2025-05-11 16:03:24.770 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:03:25.479 +03 [13993] ERROR:  syntax error at or near "end" at character 485
+2025-05-11 16:03:25.479 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:03:31.278 +03 [13993] ERROR:  query has no destination for result data
+2025-05-11 16:03:31.278 +03 [13993] HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+2025-05-11 16:03:31.278 +03 [13993] CONTEXT:  PL/pgSQL function get_all() line 3 at SQL statement
+2025-05-11 16:03:31.278 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms;
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:04:35.651 +03 [13993] ERROR:  query has no destination for result data
+2025-05-11 16:04:35.651 +03 [13993] HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+2025-05-11 16:04:35.651 +03 [13993] CONTEXT:  PL/pgSQL function get_all() line 3 at SQL statement
+2025-05-11 16:04:35.651 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms;
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:04:36.324 +03 [13993] ERROR:  query has no destination for result data
+2025-05-11 16:04:36.324 +03 [13993] HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+2025-05-11 16:04:36.324 +03 [13993] CONTEXT:  PL/pgSQL function get_all() line 3 at SQL statement
+2025-05-11 16:04:36.324 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms;
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:04:36.939 +03 [13993] ERROR:  query has no destination for result data
+2025-05-11 16:04:36.939 +03 [13993] HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+2025-05-11 16:04:36.939 +03 [13993] CONTEXT:  PL/pgSQL function get_all() line 3 at SQL statement
+2025-05-11 16:04:36.939 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms;
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:04:37.384 +03 [13993] ERROR:  query has no destination for result data
+2025-05-11 16:04:37.384 +03 [13993] HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+2025-05-11 16:04:37.384 +03 [13993] CONTEXT:  PL/pgSQL function get_all() line 3 at SQL statement
+2025-05-11 16:04:37.384 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms;
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:04:41.816 +03 [13993] ERROR:  query has no destination for result data
+2025-05-11 16:04:41.816 +03 [13993] HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+2025-05-11 16:04:41.816 +03 [13993] CONTEXT:  PL/pgSQL function get_all() line 3 at SQL statement
+2025-05-11 16:04:41.816 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms;
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-11 16:04:42.342 +03 [13993] ERROR:  query has no destination for result data
+2025-05-11 16:04:42.342 +03 [13993] HINT:  If you want to discard the results of a SELECT, use PERFORM instead.
+2025-05-11 16:04:42.342 +03 [13993] CONTEXT:  PL/pgSQL function get_all() line 3 at SQL statement
+2025-05-11 16:04:42.342 +03 [13993] STATEMENT:  drop table if exists rooms;
+	CREATE TABLE users (
+	    id SERIAL PRIMARY KEY,
+	    name VARCHAR(50) NOT NULL,
+	    email VARCHAR(100) UNIQUE NOT NULL,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	create table rooms (
+		id serial primary key,
+		v int,
+		w varchar (50)
+	);
+	
+	insert into rooms (v,w) values (1488,'test');
+	insert into rooms (v,w) values (148,'test2');
+	insert into rooms (v,w) values (188,'test3');
+	
+	create or replace procedure get_all() as $$
+	begin
+		select * from rooms;
+	end;
+	$$ LANGUAGE plpgsql;
+	call get_all();
+		
+2025-05-14 00:53:42.583 +03 [34327] FATAL:  role "user" does not exist
+2025-05-14 00:54:21.565 +03 [34707] FATAL:  role "user" does not exist
+2025-05-14 00:57:11.250 +03 [36489] FATAL:  role "user" does not exist
+2025-05-14 00:59:14.685 +03 [37739] FATAL:  database "db" does not exist
+2025-05-14 01:02:27.269 +03 [39722] FATAL:  database "dplm" does not exist
+2025-05-14 01:19:43.984 +03 [13993] ERROR:  syntax error at or near "form" at character 10
+2025-05-14 01:19:43.984 +03 [13993] STATEMENT:  select * form users
+2025-05-14 01:19:44.908 +03 [13993] ERROR:  syntax error at or near "form" at character 10
+2025-05-14 01:19:44.908 +03 [13993] STATEMENT:  select * form users
+2025-05-14 01:19:45.582 +03 [13993] ERROR:  syntax error at or near "form" at character 10
+2025-05-14 01:19:45.582 +03 [13993] STATEMENT:  select * form users
+2025-05-14 01:19:51.088 +03 [13993] ERROR:  relation "users" does not exist at character 15
+2025-05-14 01:19:51.088 +03 [13993] STATEMENT:  select * from users
+2025-05-14 01:19:54.040 +03 [13993] ERROR:  relation "users" does not exist at character 15
+2025-05-14 01:19:54.040 +03 [13993] STATEMENT:  select * from users
+2025-05-14 01:19:54.686 +03 [13993] ERROR:  relation "users" does not exist at character 15
+2025-05-14 01:19:54.686 +03 [13993] STATEMENT:  select * from users
+2025-05-14 01:25:35.556 +03 [46445] ERROR:  relation "user" does not exist at character 13
+2025-05-14 01:25:35.556 +03 [46445] STATEMENT:  INSERT INTO "user" (username) VALUES ('21343') RETURNING "user".id
+2025-05-14 03:22:11.777 +03 [24655] ERROR:  duplicate key value violates unique constraint "admin_username_key"
+2025-05-14 03:22:11.777 +03 [24655] DETAIL:  Key (username)=(admin) already exists.
+2025-05-14 03:22:11.777 +03 [24655] STATEMENT:  INSERT INTO admin (username, password) VALUES ('admin', 'admin123') RETURNING admin.id

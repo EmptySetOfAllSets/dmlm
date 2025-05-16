@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Отель "Престиж"</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}"> <span>Отель "Престиж"</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="{{ url_for('index') }}" class="{{ 'active' if request.path == url_for('index') }}">Главная</a>
+                <a href="{{ url_for('about') }}" class="{{ 'active' if request.path == url_for('about') }}">О нас</a>
+                <a href="{{ url_for('gallery') }}" class="{{ 'active' if request.path == url_for('gallery') }}">Номера</a>
+                <a href="#" class="btn">Пойти нахуй</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-columns">
+                <div class="footer-col">
+                    <h3>Отель "Престиж"</h3>
+                    <p>Пр. Победителей, 1/2<br>Минск, Беларусь</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Контакты</h3>
+                    <p>Телефон: +375 29 098 76 54<br>Email: info@prestige-hotel.ru</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Подписка</h3>
+                    <form class="subscribe-form">
+                        <input type="email" placeholder="Ваш email">
+                        <button type="submit">Подписаться</button>
+                    </form>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Отель "Престиж". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<section class="rooms">
+    <h2>Управление номерами</h2>
+    <form method="POST" action="{{ url_for('add_room') }}" class="room-form">
+        <input type="text" name="number" placeholder="Номер" required>
+        <input type="text" name="type" placeholder="Тип" required>
+        <input type="number" step="0.01" name="price" placeholder="Цена" required>
+        <input type="number" name="capacity" placeholder="Вместимость" required>
+        <button type="submit">Добавить номер</button>
+    </form>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Тип</th>
+                <th>Цена</th>
+                <th>Вместимость</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+            <tr>
+                <td>{{ room.number }}</td>
+                <td>{{ room.type }}</td>
+                <td>{{ room.price }}</td>
+                <td>{{ room.capacity }}</td>
+                <td>
+                    <a href="{{ url_for('delete_room', id=room.id) }}" 
+                       onclick="return confirm('Удалить номер?')" 
+                       class="btn-delete">Удалить</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="bookings">
+    <h2>Бронирования</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Клиент</th>
+                <th>Телефон</th>
+                <th>Номер</th>
+                <th>Даты</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.client_name }}</td>
+                <td>{{ booking.client_phone }}</td>
+                <td>{{ booking.room.number }}</td>
+                <td>{{ booking.check_in }} - {{ booking.check_out }}</td>
+                <td>
+                    <a href="{{ url_for('delete_booking', id=booking.id) }}" 
+                       onclick="return confirm('Удалить бронирование?')" 
+                       class="btn-delete">Удалить</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
