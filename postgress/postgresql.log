@@ -418,3 +418,24 @@
 2025-05-14 03:22:11.777 +03 [24655] ERROR:  duplicate key value violates unique constraint "admin_username_key"
 2025-05-14 03:22:11.777 +03 [24655] DETAIL:  Key (username)=(admin) already exists.
 2025-05-14 03:22:11.777 +03 [24655] STATEMENT:  INSERT INTO admin (username, password) VALUES ('admin', 'admin123') RETURNING admin.id
+2025-05-17 07:23:37.404 +03 [16400] ERROR:  column room.room_type_id does not exist at character 138
+2025-05-17 07:23:37.404 +03 [16400] STATEMENT:  SELECT room.id AS room_id, room.number AS room_number, room.type AS room_type, room.price AS room_price, room.capacity AS room_capacity, room.room_type_id AS room_room_type_id 
+	FROM room
+2025-05-17 18:01:25.770 +03 [13993] ERROR:  relation "clients" does not exist at character 15
+2025-05-17 18:01:25.770 +03 [13993] STATEMENT:  select * from clients
+2025-05-17 18:01:27.125 +03 [13993] ERROR:  relation "clients" does not exist at character 15
+2025-05-17 18:01:27.125 +03 [13993] STATEMENT:  select * from clients
+2025-05-17 19:54:00.235 +03 [36894] ERROR:  duplicate key value violates unique constraint "admin_username_key"
+2025-05-17 19:54:00.235 +03 [36894] DETAIL:  Key (username)=(admin) already exists.
+2025-05-17 19:54:00.235 +03 [36894] STATEMENT:  INSERT INTO admin (username, password) VALUES ('admin', 'admin123') RETURNING admin.id
+2025-05-17 19:57:24.686 +03 [13993] ERROR:  relation "rooms" does not exist at character 15
+2025-05-17 19:57:24.686 +03 [13993] STATEMENT:  select * from rooms
+2025-05-17 19:57:27.366 +03 [13993] ERROR:  relation "rooms" does not exist at character 15
+2025-05-17 19:57:27.366 +03 [13993] STATEMENT:  select * from rooms
+2025-05-17 19:57:28.297 +03 [13993] ERROR:  relation "rooms" does not exist at character 15
+2025-05-17 19:57:28.297 +03 [13993] STATEMENT:  select * from rooms
+2025-05-17 19:57:28.812 +03 [13993] ERROR:  relation "rooms" does not exist at character 15
+2025-05-17 19:57:28.812 +03 [13993] STATEMENT:  select * from rooms
+2025-05-17 20:31:46.806 +03 [59933] ERROR:  duplicate key value violates unique constraint "room_number_key"
+2025-05-17 20:31:46.806 +03 [59933] DETAIL:  Key (number)=(201) already exists.
+2025-05-17 20:31:46.806 +03 [59933] STATEMENT:  UPDATE room SET number='201' WHERE room.id = 1
