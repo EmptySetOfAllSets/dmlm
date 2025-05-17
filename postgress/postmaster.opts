@@ -1,1 +1,0 @@
-/Applications/Postgres.app/Contents/Versions/14/bin/postgres "-D" "/Users/damanikava/Documents/prjd/postgress" "-p" "5432"
