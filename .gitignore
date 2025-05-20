@@ -1,4 +1,5 @@
 dplm/
 diploma_hotel/
 postgress/
+__pycache__/
 admin.py

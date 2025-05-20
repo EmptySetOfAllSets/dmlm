@@ -36,6 +36,7 @@
                            onclick="return confirm('Удалить этот номер?')" 
                            class="btn-delete">🗑️</a>
                     </td>
+                    
                 </tr>
                 {% endfor %}
             </tbody>
@@ -45,9 +46,51 @@
     <div id="bookings" class="tab-content">
         <h2>Бронирования</h2>
         <!-- Содержимое вкладки бронирований -->
+        <div class="tab-actions">
+            <a href="{{ url_for('add_booking') }}" class="btn btn-add">+ Добавить бронирование</a>
+        </div>
         <table class="data-table">
-            <!-- Ваша таблица бронирований -->
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Номер</th>
+                    <th>Клиент</th>
+                    <th>Заезд</th>
+                    <th>Выезд</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.room.number }} ({{ booking.room.type }})</td>
+                    <td>{{ booking.client.name }}</td>
+                    <td>{{ booking.check_in.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ booking.check_out.strftime('%d.%m.%Y') }}</td>
+                    <td>
+                        {% if booking.check_in > today %}
+                        <span class="status future">Предстоящее</span>
+                        {% else %}
+                        <span class="status active">Активное</span>
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                        <a href="{{ url_for('edit_booking', id=booking.id) }}" class="btn-edit">✏️</a>
+                        <a href="{{ url_for('delete_booking', id=booking.id) }}" 
+                           onclick="return confirm('Удалить это бронирование?')" 
+                           class="btn-delete">🗑️</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
+        <div class="archive-link">
+            <a href="{{ url_for('booking_archive') }}">
+                Показать архивные бронирования ({{ past_bookings_count }})
+            </a>
+        </div>
     </div>
 
     <div id="clients" class="tab-content">

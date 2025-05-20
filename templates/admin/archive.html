@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="archive-header">
+    <h2>Архив бронирований</h2>
+    
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('booking_archive') }}">
+            <input type="text" 
+                   name="search" 
+                   placeholder="Поиск по номеру, клиенту, ID..." 
+                   value="{{ search_query }}"
+                   class="search-input">
+            <button type="submit" class="search-btn">Найти</button>
+            {% if search_query %}
+            <a href="{{ url_for('booking_archive') }}" class="reset-search">Сбросить</a>
+            {% endif %}
+        </form>
+    </div>
+    
+    <div class="stats">
+        Найдено: {{ bookings|length }} записей
+    </div>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Номер</th>
+            <th>Клиент</th>
+            <th>Телефон</th>
+            <th>Заезд</th>
+            <th>Выезд</th>
+            <th>Дней назад</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.id }}</td>
+            <td>{{ booking.room.number }} ({{ booking.room.type }})</td>
+            <td>{{ booking.client.name }}</td>
+            <td>{{ booking.client.phone }}</td>
+            <td>{{ booking.check_in.strftime('%d.%m.%Y') }}</td>
+            <td>{{ booking.check_out.strftime('%d.%m.%Y') }}</td>
+            <td>{{ (today - booking.check_out).days }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7" class="no-results">Нет архивных бронирований</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="back-link">
+    <a href="{{ url_for('admin_dashboard') }}">← Вернуться к актуальным бронированиям</a>
+</div>
+{% endblock %}

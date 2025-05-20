@@ -1,0 +1,130 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="booking-form-container">
+    <h2>Редактирование бронирования #{{ booking.id }}</h2>
+    
+    <form method="POST" class="booking-form">
+        <div class="form-group">
+            <label for="room_id">Номер:</label>
+            <select id="room_id" name="room_id" required>
+                {% for room in rooms %}
+                <option value="{{ room.id }}"
+                    {% if room.id == booking.room_id %}selected{% endif %}>
+                    №{{ room.number }} ({{ room.type }}, {{ room.capacity }} чел.)
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="client_search">Поиск клиента:</label>
+            <input type="text" id="client_search" 
+                   placeholder="Введите имя, телефон или email" 
+                   class="search-input"
+                   value="{{ booking.client.name }}">
+            <div class="search-results" id="client_results"></div>
+        </div>
+        
+        <input type="hidden" id="client_id" name="client_id" value="{{ booking.client_id }}">
+        
+        <div class="selected-client" id="selected_client">
+            <h4>Текущий клиент:</h4>
+            <p><strong>Имя:</strong> {{ booking.client.name }}</p>
+            <p><strong>Телефон:</strong> {{ booking.client.phone }}</p>
+            <p><strong>Email:</strong> {{ booking.client.mail or 'не указан' }}</p>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="check_in">Дата заезда:</label>
+                <input type="date" id="check_in" name="check_in" 
+                       value="{{ booking.check_in.strftime('%Y-%m-%d') }}"
+                       min="{{ today }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="check_out">Дата выезда:</label>
+                <input type="date" id="check_out" name="check_out" 
+                       value="{{ booking.check_out.strftime('%Y-%m-%d') }}"
+                       min="{{ booking.check_in.strftime('%Y-%m-%d') }}" required>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Аналогичный скрипт для поиска клиентов, как в add_booking.html
+document.addEventListener('DOMContentLoaded', function() {
+    const clientSearch = document.getElementById('client_search');
+    const clientResults = document.getElementById('client_results');
+    const clientIdInput = document.getElementById('client_id');
+    const selectedClient = document.getElementById('selected_client');
+    
+    // Все клиенты (можно заменить на AJAX-запрос)
+    const clients = [
+        {% for client in clients %}
+        {
+            id: {{ client.id }},
+            name: "{{ client.name }}",
+            phone: "{{ client.phone }}",
+            email: "{{ client.mail or '' }}",
+            text: "{{ client.name }} (тел: {{ client.phone }}{% if client.mail %}, email: {{ client.mail }}{% endif %})"
+        },
+        {% endfor %}
+    ];
+    
+    // Поиск клиентов
+    clientSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        clientResults.innerHTML = '';
+        
+        if (searchTerm.length < 2) return;
+        
+        const filtered = clients.filter(client => 
+            client.text.toLowerCase().includes(searchTerm)
+        );
+        
+        if (filtered.length === 0) {
+            clientResults.innerHTML = '<div class="no-results">Клиенты не найдены</div>';
+            return;
+        }
+        
+        filtered.slice(0, 5).forEach(client => {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            div.textContent = client.text;
+            div.addEventListener('click', () => {
+                clientIdInput.value = client.id;
+                selectedClient.innerHTML = `
+                    <h4>Выбранный клиент:</h4>
+                    <p><strong>Имя:</strong> ${client.name}</p>
+                    <p><strong>Телефон:</strong> ${client.phone}</p>
+                    <p><strong>Email:</strong> ${client.email || 'не указан'}</p>
+                `;
+                clientResults.style.display = 'none';
+            });
+            clientResults.appendChild(div);
+        });
+        
+        clientResults.style.display = 'block';
+    });
+    
+    // Обработка дат
+    const checkIn = document.getElementById('check_in');
+    const checkOut = document.getElementById('check_out');
+    
+    checkIn.addEventListener('change', function() {
+        checkOut.min = this.value;
+        if (checkOut.value && checkOut.value < this.value) {
+            checkOut.value = this.value;
+        }
+    });
+});
+</script>
+{% endblock %}

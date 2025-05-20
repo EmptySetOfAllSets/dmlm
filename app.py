@@ -3,6 +3,9 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user
 from datetime import datetime
+from sqlalchemy import or_, and_, not_, cast, String, func, Integer  # Основные функции
+from sqlalchemy.exc import IntegrityError  # Для обработки ошибок БД
+from flask import session  # Добавьте в импорты
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:pryhazosc@localhost/hotel'
@@ -70,11 +73,50 @@ def admin_login():
 @login_required
 def admin_dashboard():
     rooms = Room.query.all()
-    bookings = Booking.query.order_by(Booking.id).all()
+    today = datetime.now().date()
+    #bookings = Booking.query.order_by(Booking.id).all()
+    bookings = Booking.query.filter(Booking.check_out >= today)\
+                          .order_by(Booking.check_in.asc())\
+                          .all()
     clients = Client.query.all()
     room_types = Room_type.query.all()
+    past_bookings_count = Booking.query.filter(Booking.check_out < today).count()
 
-    return render_template('admin/dashboard.html', rooms=rooms, bookings=bookings, clients= clients, room_types =room_types)
+    return render_template('admin/dashboard.html', 
+                        rooms=rooms,
+                        bookings=bookings, clients= clients, room_types =room_types,
+                        today = today,
+                        past_bookings_count = past_bookings_count)
+
+@app.route('/admin/archive')
+@login_required
+def booking_archive():
+    search_query = request.args.get('search', '').strip()
+    today = datetime.now().date()
+    
+    # Базовый запрос для архивных бронирований
+    bookings_query = Booking.query.filter(Booking.check_out < today)\
+                                .join(Room)\
+                                .join(Client)
+    
+    # Применяем поиск если есть запрос
+    if search_query:
+        bookings_query = bookings_query.filter(
+            or_(
+                Room.number.ilike(f'%{search_query}%'),
+                Room_type.type.ilike(f'%{search_query}%'),
+                Client.name.ilike(f'%{search_query}%'),
+                Client.phone.ilike(f'%{search_query}%'),
+                cast(Booking.id, String).ilike(f'%{search_query}%')
+            )
+        )
+    
+    bookings = bookings_query.order_by(Booking.check_out.desc()).all()
+    
+    return render_template('admin/archive.html',
+                         bookings=bookings,
+                         search_query=search_query,
+                         today=today)
 
 # Маршруты для работы с типами номеров
 @app.route('/admin/room_type/add', methods=['POST'])
@@ -123,6 +165,34 @@ def add_room():
     db.session.commit()
     flash('Номер успешно добавлен', 'success')
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/booking/add', methods=['GET', 'POST'])
+@login_required
+def add_booking():
+    if request.method == 'POST':
+        try:
+            new_booking = Booking(
+                room_id=int(request.form['room_id']),
+                client_id=int(request.form['client_id']),
+                check_in=datetime.strptime(request.form['check_in'], '%Y-%m-%d').date(),
+                check_out=datetime.strptime(request.form['check_out'], '%Y-%m-%d').date()
+            )
+            db.session.add(new_booking)
+            db.session.commit()
+            flash('Бронирование успешно добавлено', 'success')
+            return redirect(url_for('admin_dashboard'))
+        except ValueError as e:
+            db.session.rollback()
+            flash(f'Ошибка в данных: {str(e)}', 'error')
+    
+    # Получаем списки для выпадающих меню
+    rooms = Room.query.order_by(Room.number).all()
+    clients = Client.query.order_by(Client.name).all()
+    
+    return render_template('admin/add_booking.html',
+                         rooms=rooms,
+                         clients=clients,
+                         today=datetime.now().date())
 
 @app.route('/admin/room/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -207,7 +277,162 @@ def delete_booking(id):
     flash('Бронирование удалено', 'success')
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/admin/booking/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_booking(id):
+    booking = Booking.query.get_or_404(id)
+    rooms = Room.query.order_by(Room.number).all()
+    clients = Client.query.order_by(Client.name).all()
 
+    if request.method == 'POST':
+        try:
+            # Проверяем, изменились ли даты или номер
+            new_room_id = int(request.form['room_id'])
+            new_check_in = datetime.strptime(request.form['check_in'], '%Y-%m-%d').date()
+            new_check_out = datetime.strptime(request.form['check_out'], '%Y-%m-%d').date()
+
+            # Проверка доступности номера (исключая текущее бронирование)
+            if (new_room_id != booking.room_id or 
+                new_check_in != booking.check_in or 
+                new_check_out != booking.check_out):
+                
+                overlapping = Booking.query.filter(
+                    Booking.id != id,
+                    Booking.room_id == new_room_id,
+                    Booking.check_out > new_check_in,
+                    Booking.check_in < new_check_out
+                ).first()
+
+                if overlapping:
+                    flash('Номер уже занят в выбранные даты другим бронированием', 'error')
+                    return redirect(url_for('edit_booking', id=id))
+
+            # Обновляем данные
+            booking.room_id = new_room_id
+            booking.client_id = int(request.form['client_id'])
+            booking.check_in = new_check_in
+            booking.check_out = new_check_out
+
+            db.session.commit()
+            flash('Бронирование успешно обновлено', 'success')
+            return redirect(url_for('admin_dashboard'))
+
+        except ValueError as e:
+            db.session.rollback()
+            flash(f'Ошибка в данных: {str(e)}', 'error')
+
+    return render_template('admin/edit_booking.html',
+                         booking=booking,
+                         rooms=rooms,
+                         clients=clients,
+                         today=datetime.now().date())
+
+
+@app.route('/booking', methods=['GET', 'POST'])
+def booking_start():
+    if request.method == 'POST':
+        # Сохраняем выбор пользователя (новый/существующий клиент)
+        session['is_returning_client'] = request.form.get('client_type') == 'returning'
+        return redirect(url_for('client_info'))
+    
+    return render_template('booking/step1_client_type.html')
+
+# Маршрут для ввода информации о клиенте
+@app.route('/booking/client-info', methods=['GET', 'POST'])
+def client_info():
+    if not session.get('is_returning_client') is not None:
+        return redirect(url_for('booking_start'))
+    
+    if request.method == 'POST':
+        if session['is_returning_client']:
+            # Поиск существующего клиента
+            search_query = request.form.get('search')
+            clients = Client.query.filter(
+                or_(
+                    Client.name.ilike(f'%{search_query}%'),
+                    Client.phone.ilike(f'%{search_query}%'),
+                    Client.passport.ilike(f'%{search_query}%')
+                )
+            ).all()
+            return render_template('booking/step2a_client_search.html', clients=clients)
+        else:
+            # Создание нового клиента
+            new_client = Client(
+                name=request.form.get('name'),
+                phone=request.form.get('phone'),
+                mail=request.form.get('email'),
+                passport=request.form.get('passport')
+            )
+            db.session.add(new_client)
+            db.session.commit()
+            session['client_id'] = new_client.id
+            return redirect(url_for('room_selection'))
+    
+    if session['is_returning_client']:
+        return render_template('booking/step2a_client_search.html', clients=None)
+    else:
+        return render_template('booking/step2b_client_registration.html')
+
+# Маршрут для выбора клиента из результатов поиска
+@app.route('/booking/select-client/<int:client_id>')
+def select_client(client_id):
+    session['client_id'] = client_id
+    return redirect(url_for('room_selection'))
+
+# Маршрут для выбора номера
+@app.route('/booking/select-room', methods=['GET', 'POST'])
+def room_selection():
+    if 'client_id' not in session:
+        return redirect(url_for('booking_start'))
+    
+    if request.method == 'POST':
+        # Сохраняем выбранные даты
+        session['check_in'] = request.form.get('check_in')
+        session['check_out'] = request.form.get('check_out')
+    
+    # Получаем доступные номера
+    check_in = datetime.strptime(session.get('check_in'), '%Y-%m-%d').date() if session.get('check_in') else None
+    check_out = datetime.strptime(session.get('check_out'), '%Y-%m-%d').date() if session.get('check_out') else None
+    
+    available_rooms = []
+    if check_in and check_out:
+        # Запрос для поиска свободных номеров
+        booked_rooms = db.session.query(Booking.room_id).filter(
+            Booking.check_out > check_in,
+            Booking.check_in < check_out
+        ).subquery()
+        
+        available_rooms = Room.query.filter(
+            ~Room.id.in_(booked_rooms)
+        ).all()
+    
+    return render_template('booking/step3_room_selection.html',
+                         available_rooms=available_rooms,
+                         check_in=session.get('check_in'),
+                         check_out=session.get('check_out'))
+
+# Маршрут для подтверждения бронирования
+@app.route('/booking/confirm/<int:room_id>')
+def confirm_booking(room_id):
+    if 'client_id' not in session or not session.get('check_in') or not session.get('check_out'):
+        return redirect(url_for('booking_start'))
+    
+    # Создаем бронирование
+    new_booking = Booking(
+        room_id=room_id,
+        client_id=session['client_id'],
+        check_in=datetime.strptime(session['check_in'], '%Y-%m-%d').date(),
+        check_out=datetime.strptime(session['check_out'], '%Y-%m-%d').date()
+    )
+    
+    db.session.add(new_booking)
+    db.session.commit()
+    
+    # Очищаем сессию
+    for key in ['is_returning_client', 'client_id', 'check_in', 'check_out']:
+        session.pop(key, None)
+    
+    return render_template('booking/step4_confirmation.html', booking=new_booking)
 
 @app.route('/admin/logout')
 @login_required

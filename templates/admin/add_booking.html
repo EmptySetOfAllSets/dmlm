@@ -1,0 +1,154 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="booking-form-container">
+    <h2>Добавить новое бронирование</h2>
+    
+    <form method="POST" class="booking-form">
+        <div class="form-group">
+            <label for="room_id">Номер:</label>
+            <select id="room_id" name="room_id" required>
+                <option value="">-- Выберите номер --</option>
+                {% for room in rooms %}
+                <option value="{{ room.id }}">
+                    №{{ room.number }} ({{ room.type }}, {{ room.capacity }} чел.) - {{ room.price }} ₽/ночь
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="check_in">Дата заезда:</label>
+                <input type="date" id="check_in" name="check_in" 
+                       min="{{ today }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="check_out">Дата выезда:</label>
+                <input type="date" id="check_out" name="check_out" 
+                       min="{{ today }}" required>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label for="client_search">Поиск клиента:</label>
+            <input type="text" id="client_search" placeholder="Введите имя, телефон или email" class="search-input">
+            <div class="search-results" id="client_results"></div>
+        </div>
+        
+        <div class="form-group" style="display: none;">
+            <label for="client_id">Выбранный клиент:</label>
+            <select id="client_id" name="client_id" required>
+                <option value="">-- Клиент не выбран --</option>
+                {% for client in clients %}
+                <option value="{{ client.id }}" 
+                        data-name="{{ client.name }}"
+                        data-phone="{{ client.phone }}"
+                        data-email="{{ client.mail or '' }}">
+                    {{ client.name }} (тел: {{ client.phone }}{% if client.mail %}, email: {{ client.mail }}{% endif %})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="selected-client" id="selected_client" style="display: none;">
+            <h4>Выбранный клиент:</h4>
+            <p><strong>Имя:</strong> <span id="selected_name"></span></p>
+            <p><strong>Телефон:</strong> <span id="selected_phone"></span></p>
+            <p><strong>Email:</strong> <span id="selected_email"></span></p>
+            <button type="button" id="change_client" class="btn-small">Изменить</button>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const clientSearch = document.getElementById('client_search');
+                const clientResults = document.getElementById('client_results');
+                const clientSelect = document.getElementById('client_id');
+                const selectedClient = document.getElementById('selected_client');
+                const changeClientBtn = document.getElementById('change_client');
+                
+                // Все варианты клиентов
+                const clientOptions = Array.from(clientSelect.querySelectorAll('option')).slice(1);
+                
+                // Поиск клиентов
+                clientSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    clientResults.innerHTML = '';
+                    
+                    if (searchTerm.length < 2) return;
+                    
+                    const filtered = clientOptions.filter(opt => {
+                        const text = opt.textContent.toLowerCase();
+                        return text.includes(searchTerm);
+                    });
+                    
+                    if (filtered.length === 0) {
+                        clientResults.innerHTML = '<div class="no-results">Клиенты не найдены</div>';
+                        return;
+                    }
+                    
+                    filtered.slice(0, 5).forEach(opt => {
+                        const div = document.createElement('div');
+                        div.className = 'result-item';
+                        div.innerHTML = opt.textContent;
+                        div.addEventListener('click', () => selectClient(opt));
+                        clientResults.appendChild(div);
+                    });
+                });
+                
+                // Выбор клиента
+                function selectClient(option) {
+                    clientSelect.value = option.value;
+                    document.getElementById('selected_name').textContent = option.dataset.name;
+                    document.getElementById('selected_phone').textContent = option.dataset.phone;
+                    document.getElementById('selected_email').textContent = option.dataset.email || 'не указан';
+                    
+                    selectedClient.style.display = 'block';
+                    clientSearch.style.display = 'none';
+                    clientResults.style.display = 'none';
+                }
+                
+                // Смена клиента
+                changeClientBtn.addEventListener('click', function() {
+                    selectedClient.style.display = 'none';
+                    clientSearch.style.display = 'block';
+                    clientSearch.value = '';
+                    clientResults.innerHTML = '';
+                });
+            });
+            </script>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Создать бронирование</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkIn = document.getElementById('check_in');
+    const checkOut = document.getElementById('check_out');
+    
+    // Устанавливаем минимальную дату выезда
+    checkIn.addEventListener('change', function() {
+        checkOut.min = this.value;
+        if (checkOut.value && checkOut.value < this.value) {
+            checkOut.value = this.value;
+        }
+    });
+    
+    // Валидация дат
+    document.querySelector('.booking-form').addEventListener('submit', function(e) {
+        if (checkIn.value && checkOut.value && checkOut.value <= checkIn.value) {
+            alert('Дата выезда должна быть позже даты заезда!');
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}
