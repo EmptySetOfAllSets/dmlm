@@ -1,12 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import os
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_required, current_user, login_user
-from datetime import datetime
+from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user
+from datetime import datetime, timedelta
 from sqlalchemy import or_, and_, not_, cast, String, func, Integer  # Основные функции
 from sqlalchemy.exc import IntegrityError  # Для обработки ошибок БД
-from flask import session  # Добавьте в импорты
-
+# from models import Client, Booking, Room_type, Room, Admin
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:pryhazosc@localhost/hotel'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -16,7 +15,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'admin_login'
 
-# Модели БД
+
 class Room_type(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(50), nullable=False)
@@ -382,38 +381,98 @@ def select_client(client_id):
 # Маршрут для выбора номера
 @app.route('/booking/select-room', methods=['GET', 'POST'])
 def room_selection():
+    # Проверяем, что пользователь прошел предыдущие шаги
     if 'client_id' not in session:
         return redirect(url_for('booking_start'))
-    
-    if request.method == 'POST':
-        # Сохраняем выбранные даты
-        session['check_in'] = request.form.get('check_in')
-        session['check_out'] = request.form.get('check_out')
-    
-    # Получаем доступные номера
-    check_in = datetime.strptime(session.get('check_in'), '%Y-%m-%d').date() if session.get('check_in') else None
-    check_out = datetime.strptime(session.get('check_out'), '%Y-%m-%d').date() if session.get('check_out') else None
-    
-    available_rooms = []
-    if check_in and check_out:
-        # Запрос для поиска свободных номеров
-        booked_rooms = db.session.query(Booking.room_id).filter(
-            Booking.check_out > check_in,
-            Booking.check_in < check_out
-        ).subquery()
-        
-        available_rooms = Room.query.filter(
-            ~Room.id.in_(booked_rooms)
-        ).all()
-    
-    return render_template('booking/step3_room_selection.html',
-                         available_rooms=available_rooms,
-                         check_in=session.get('check_in'),
-                         check_out=session.get('check_out'))
 
+    # Обработка отправки формы
+    if request.method == 'POST':
+        # Получаем даты из формы
+        new_check_in = request.form.get('check_in')
+        new_check_out = request.form.get('check_out')
+        
+        # Проверяем и сохраняем даты
+        if new_check_in and new_check_out:
+            try:
+                # Валидация дат
+                check_in_date = datetime.strptime(new_check_in, '%Y-%m-%d').date()
+                check_out_date = datetime.strptime(new_check_out, '%Y-%m-%d').date()
+                
+                if check_in_date >= check_out_date:
+                    flash('Дата выезда должна быть позже даты заезда', 'error')
+                elif check_in_date < datetime.now().date():
+                    flash('Нельзя бронировать номер на прошедшие даты', 'error')
+                else:
+                    session['check_in'] = new_check_in
+                    session['check_out'] = new_check_out
+            except ValueError:
+                flash('Некорректный формат даты. Используйте YYYY-MM-DD', 'error')
+
+    # Если даты не установлены, перенаправляем на страницу их ввода
+    if 'check_in' not in session or 'check_out' not in session:
+        return render_template('booking/set_dates.html',
+                            today=datetime.now().date(),
+                            tomorrow=(datetime.now() + timedelta(days=1)).date())
+
+    try:
+        # Получаем параметры фильтрации
+        room_type_filter = request.form.get('room_type', 'all')
+        max_price_filter = request.form.get('max_price')
+        min_capacity_filter = request.form.get('min_capacity')
+
+        # Преобразуем даты из сессии
+        check_in_date = datetime.strptime(session['check_in'], '%Y-%m-%d').date()
+        check_out_date = datetime.strptime(session['check_out'], '%Y-%m-%d').date()
+
+        # Запрос для поиска занятых номеров
+        booked_rooms = db.session.query(Booking.room_id).filter(
+            Booking.check_out > check_in_date,
+            Booking.check_in < check_out_date
+        ).subquery()
+
+        # Базовый запрос для доступных номеров
+        rooms_query = Room.query.filter(
+            ~Room.id.in_(booked_rooms)
+        ).join(Room_type)
+
+        # Применяем фильтры
+        if room_type_filter != 'all':
+            rooms_query = rooms_query.filter(Room.room_type_id == room_type_filter)
+        
+        if max_price_filter:
+            rooms_query = rooms_query.filter(Room.price <= float(max_price_filter))
+        
+        if min_capacity_filter:
+            rooms_query = rooms_query.filter(Room.capacity >= int(min_capacity_filter))
+
+        available_rooms = rooms_query.all()
+        room_types = Room_type.query.all()
+
+        return render_template('booking/step3_room_selection.html',
+                            available_rooms=available_rooms,
+                            room_types=room_types,
+                            check_in=session['check_in'],
+                            check_out=session['check_out'],
+                            current_filters={
+                                'room_type': room_type_filter,
+                                'max_price': max_price_filter,
+                                'min_capacity': min_capacity_filter
+                            })
+
+    except Exception as e:
+        flash(f'Произошла ошибка: {str(e)}', 'error')
+        return redirect(url_for('booking_start'))
 # Маршрут для подтверждения бронирования
 @app.route('/booking/confirm/<int:room_id>')
 def confirm_booking(room_id):
+    if request.method == 'POST':
+        # Обновляем даты в сессии, если они изменились
+        new_check_in = request.form.get('check_in')
+        new_check_out = request.form.get('check_out')
+        
+        if new_check_in and new_check_out:
+            session['check_in'] = new_check_in
+            session['check_out'] = new_check_out
     if 'client_id' not in session or not session.get('check_in') or not session.get('check_out'):
         return redirect(url_for('booking_start'))
     

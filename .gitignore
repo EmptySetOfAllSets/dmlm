@@ -3,3 +3,5 @@ diploma_hotel/
 postgress/
 __pycache__/
 admin.py
+init_db.py
+.DS_Store

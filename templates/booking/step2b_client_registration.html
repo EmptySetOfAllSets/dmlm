@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Введите ваши данные</h2>
+<form method="POST">
+    <input type="text" name="name" placeholder="ФИО" required>
+    <input type="tel" name="phone" placeholder="Телефон" required>
+    <input type="email" name="email" placeholder="Email">
+    <input type="text" name="passport" placeholder="Паспортные данные" required>
+    <button type="submit">Продолжить</button>
+</form>
+{% endblock %}

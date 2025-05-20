@@ -17,7 +17,7 @@
                 <a href="{{ url_for('index') }}" class="{{ 'active' if request.path == url_for('index') }}">Главная</a>
                 <a href="{{ url_for('about') }}" class="{{ 'active' if request.path == url_for('about') }}">О нас</a>
                 <a href="{{ url_for('gallery') }}" class="{{ 'active' if request.path == url_for('gallery') }}">Номера</a>
-                <a href="#" class="btn">Пойти нахуй</a>
+                <a href="{{ url_for('booking_start') }}" class="btn btn-primary">Забронировать номер!</a>
             </nav>
         </div>
     </header>

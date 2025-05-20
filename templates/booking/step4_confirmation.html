@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Бронирование подтверждено!</h2>
+<p>Номер: {{ booking.room.number }}</p>
+<p>Даты: с {{ booking.check_in }} по {{ booking.check_out }}</p>
+<p>Стоимость: {{ (booking.check_out - booking.check_in).days * booking.room.price }} руб.</p>
+{% endblock %}
