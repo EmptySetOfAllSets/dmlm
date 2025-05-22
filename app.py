@@ -143,10 +143,19 @@ def edit_room_type(id):
 @app.route('/admin/room_type/delete/<int:id>')
 @login_required
 def delete_room_type(id):
-    room_type = Room_type.query.get_or_404(id)
-    db.session.delete(room_type)
-    db.session.commit()
-    flash('Тип номера удален', 'success')
+    try:
+        room_type = Room_type.query.get_or_404(id)
+        if room_type.rooms:
+            flash('Нельзя удалить тип номера: существуют связанные номера', 'error')
+            return redirect(url_for('admin_dashboard'))
+        db.session.delete(room_type)
+        db.session.commit()
+        flash('Тип номера успешно удален', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при удалении: {str(e)}', 'error')
+    
     return redirect(url_for('admin_dashboard'))
 
 # Маршруты для работы с номерами
@@ -236,10 +245,17 @@ def edit_room(id):
 @app.route('/admin/room/delete/<int:id>')
 @login_required
 def delete_room(id):
-    room = Room.query.get_or_404(id)
-    db.session.delete(room)
-    db.session.commit()
-    flash('Номер удален', 'success')
+    try:
+        room = Room.query.get_or_404(id)
+        if room.bookings:
+            flash('Нельзя удалить номер: существуют связанные бронирования', 'error')
+            return redirect(url_for('admin_dashboard'))
+        db.session.delete(room)
+        db.session.commit()
+        flash('Номер удален', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при удалении: {str(e)}', 'error')
     return redirect(url_for('admin_dashboard'))
 
 # Маршруты для работы с клиентами
@@ -260,10 +276,18 @@ def edit_client(id):
 @app.route('/admin/client/delete/<int:id>')
 @login_required
 def delete_client(id):
-    client = Client.query.get_or_404(id)
-    db.session.delete(client)
-    db.session.commit()
-    flash('Клиент удален', 'success')
+
+    try:
+        client = Client.query.get_or_404(id)
+        if client.bookings:
+            flash('Нельзя удалить клиента: существуют связанные бронирования', 'error')
+            return redirect(url_for('admin_dashboard'))
+        db.session.delete(client)
+        db.session.commit()
+        flash('Клиент удален', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при удалении: {str(e)}', 'error')
     return redirect(url_for('admin_dashboard'))
 
 # Маршруты для бронирований (только просмотр и удаление)
