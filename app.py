@@ -5,11 +5,14 @@ from flask_login import LoginManager, UserMixin, login_required, current_user, l
 from datetime import datetime, timedelta
 from sqlalchemy import or_, and_, not_, cast, String, func, Integer  # Основные функции
 from sqlalchemy.exc import IntegrityError  # Для обработки ошибок БД
+from dotenv import load_dotenv
 # from models import Client, Booking, Room_type, Room, Admin
+
+load_dotenv()
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:pryhazosc@localhost/hotel'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'ваш_секретный_ключ'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DB_URI")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False') == 'True'
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
