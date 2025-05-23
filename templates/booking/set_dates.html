@@ -1,22 +1,27 @@
+
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Выберите даты проживания</h2>
-<form method="POST" action="{{ url_for('room_selection') }}">
-    <div class="form-group">
-        <label>Дата заезда: 
-            <input type="date" name="check_in" 
-                   min="{{ today.strftime('%Y-%m-%d') }}" 
-                   required>
-        </label>
-    </div>
-    <div class="form-group">
-        <label>Дата выезда: 
-            <input type="date" name="check_out" 
-                   min="{{ tomorrow.strftime('%Y-%m-%d') }}" 
-                   required>
-        </label>
-    </div>
-    <button type="submit">Показать доступные номера</button>
-</form>
+<div class="date-selection-container">
+    <h2 class="date-selection-title">Выберите даты проживания</h2>
+    <form method="POST" action="{{ url_for('room_selection') }}" class="date-selection-form">
+        <div class="date-input-group">
+            <div class="form-group">
+                <label class="date-input-label">Дата заезда:
+                    <input type="date" name="check_in" 
+                           min="{{ today.strftime('%Y-%m-%d') }}" 
+                           required class="date-input">
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="date-input-label">Дата выезда:
+                    <input type="date" name="check_out" 
+                           min="{{ tomorrow.strftime('%Y-%m-%d') }}" 
+                           required class="date-input">
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="date-submit-btn">Показать доступные номера</button>
+    </form>
+</div>
 {% endblock %}

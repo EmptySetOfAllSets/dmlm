@@ -1,8 +1,32 @@
+
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Бронирование подтверждено!</h2>
-<p>Номер: {{ booking.room.number }}</p>
-<p>Даты: с {{ booking.check_in }} по {{ booking.check_out }}</p>
-<p>Стоимость: {{ (booking.check_out - booking.check_in).days * booking.room.price }} руб.</p>
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <h2 class="confirmation-title">Бронирование подтверждено!</h2>
+        <div class="confirmation-icon">✓</div>
+        
+        <div class="booking-details">
+            <div class="detail-row">
+                <span class="detail-label">Номер:</span>
+                <span class="detail-value">{{ booking.room.number }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Даты:</span>
+                <span class="detail-value">с {{ booking.check_in }} по {{ booking.check_out }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Стоимость:</span>
+                <span class="detail-value highlight">
+                    {{ (booking.check_out - booking.check_in).days * booking.room.price }} руб.
+                </span>
+            </div>
+        </div>
+        
+        <div class="confirmation-actions">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Вернуться на главную</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

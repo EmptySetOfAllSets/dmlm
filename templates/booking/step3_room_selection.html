@@ -1,86 +1,73 @@
+
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Выберите номер</h2>
+<div class="room-selection-container">
+    <h2>Выберите номер</h2>
 
-<form method="POST" class="filter-form">
-    <div class="form-group">
-        <label>Дата заезда: <input type="date" name="check_in" value="{{ check_in }}" required></label>
-        <label>Дата выезда: <input type="date" name="check_out" value="{{ check_out }}" required></label>
-    </div>
+    <form method="POST" class="room-filter-form">
+        <div class="filter-grid">
+            <div class="filter-group date-filters">
+                <label class="filter-label">Дата заезда:
+                    <input type="date" name="check_in" value="{{ check_in }}" required class="filter-input">
+                </label>
+                <label class="filter-label">Дата выезда:
+                    <input type="date" name="check_out" value="{{ check_out }}" required class="filter-input">
+                </label>
+            </div>
 
-    <div class="form-group">
-        <label>Тип номера:
-            <select name="room_type">
-                <option value="all">Все типы</option>
-                {% for type in room_types %}
-                <option value="{{ type.id }}" 
-                    {% if current_filters.room_type == type.id|string %}selected{% endif %}>
-                    {{ type.type }}
-                </option>
-                {% endfor %}
-            </select>
-        </label>
-    </div>
+            <div class="filter-group">
+                <label class="filter-label">Тип номера:
+                    <select name="room_type" class="filter-select">
+                        <option value="all">Все типы</option>
+                        {% for type in room_types %}
+                        <option value="{{ type.id }}" 
+                            {% if current_filters.room_type == type.id|string %}selected{% endif %}>
+                            {{ type.type }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
 
-    <div class="form-group">
-        <label>Макс. цена: <input type="number" name="max_price" 
-                               value="{{ current_filters.max_price or '' }}" 
-                               placeholder="Любая"></label>
-    </div>
+            <div class="filter-group">
+                <label class="filter-label">Макс. цена:
+                    <input type="number" name="max_price" 
+                        value="{{ current_filters.max_price or '' }}" 
+                        placeholder="Любая" class="filter-input">
+                </label>
+            </div>
 
-    <div class="form-group">
-        <label>Мин. вместимость: <input type="number" name="min_capacity" 
-                                    value="{{ current_filters.min_capacity or '' }}" 
-                                    placeholder="Любая"></label>
-    </div>
-
-    <button type="submit" class="btn-filter">Применить фильтры</button>
-</form>
-
-{% if available_rooms %}
-    <div class="room-list">
-        {% for room in available_rooms %}
-        <div class="room-card">
-            <h3>Номер {{ room.number }}</h3>
-            <p><strong>Тип:</strong> {{ room.room_type.type }}</p>
-            <p><strong>Цена за ночь:</strong> {{ room.price }} руб.</p>
-            <p><strong>Вместимость:</strong> {{ room.capacity }} чел.</p>
-            <a href="{{ url_for('confirm_booking', room_id=room.id) }}" class="btn-book">Выбрать</a>
+            <div class="filter-group">
+                <label class="filter-label">Мин. вместимость:
+                    <input type="number" name="min_capacity" 
+                        value="{{ current_filters.min_capacity or '' }}" 
+                        placeholder="Любая" class="filter-input">
+                </label>
+            </div>
         </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <p class="no-rooms">Нет доступных номеров по выбранным критериям.</p>
-{% endif %}
 
-<style>
-    .filter-form {
-        background: #f5f5f5;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 30px;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .room-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-    }
-    .room-card {
-        border: 1px solid #ddd;
-        padding: 15px;
-        border-radius: 8px;
-    }
-    .btn-book {
-        display: inline-block;
-        background: #4CAF50;
-        color: white;
-        padding: 8px 16px;
-        text-decoration: none;
-        border-radius: 4px;
-    }
-</style>
+        <button type="submit" class="filter-submit-btn">Применить фильтры</button>
+    </form>
+
+    {% if available_rooms %}
+        <div class="room-grid">
+            {% for room in available_rooms %}
+            <div class="room-card">
+                <div class="room-card-content">
+                    <h3 class="room-title">Номер {{ room.number }}</h3>
+                    <div class="room-details">
+                        <p><span class="detail-label">Тип:</span> {{ room.room_type.type }}</p>
+                        <p><span class="detail-label">Цена за ночь:</span> {{ room.price }} руб.</p>
+                        <p><span class="detail-label">Вместимость:</span> {{ room.capacity }} чел.</p>
+                    </div>
+                    <a href="{{ url_for('confirm_booking', room_id=room.id) }}" class="room-book-btn">Выбрать</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-rooms-message">Нет доступных номеров по выбранным критериям.</p>
+    {% endif %}
+</div>
 {% endblock %}

@@ -1,12 +1,23 @@
+=== templates/booking/step2b_client_registration.html ===
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Введите ваши данные</h2>
-<form method="POST">
-    <input type="text" name="name" placeholder="ФИО" required>
-    <input type="tel" name="phone" placeholder="Телефон" required>
-    <input type="email" name="email" placeholder="Email">
-    <input type="text" name="passport" placeholder="Паспортные данные" required>
-    <button type="submit">Продолжить</button>
-</form>
+<div class="booking-container client-registration">
+    <h2>Введите ваши данные</h2>
+    <form method="POST" class="client-form">
+        <div class="form-group">
+            <input type="text" name="name" placeholder="ФИО" required>
+        </div>
+        <div class="form-group">
+            <input type="tel" name="phone" placeholder="Телефон" required>
+        </div>
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <input type="text" name="passport" placeholder="Паспортные данные" required>
+        </div>
+        <button type="submit" class="submit-btn">Продолжить</button>
+    </form>
+</div>
 {% endblock %}

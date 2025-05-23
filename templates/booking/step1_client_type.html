@@ -1,15 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Бронирование номера</h2>
-<form method="POST">
-    <p>Вы уже останавливались у нас?</p>
-    <label>
-        <input type="radio" name="client_type" value="returning" checked> Да
-    </label>
-    <label>
-        <input type="radio" name="client_type" value="new"> Нет
-    </label>
-    <button type="submit">Продолжить</button>
-</form>
+<div class="booking-container">
+    <h2>Бронирование номера</h2>
+    <form method="POST" class="booking-form">
+        <p>Вы уже останавливались у нас?</p>
+        <div class="radio-options">
+            <label class="radio-option">
+                <input type="radio" name="client_type" value="returning" checked>
+                <span>Да</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="client_type" value="new">
+                <span>Нет</span>
+            </label>
+        </div>
+        <button type="submit">Продолжить</button>
+    </form>
+</div>
 {% endblock %}

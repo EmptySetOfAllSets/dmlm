@@ -1,21 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Поиск ваших данных</h2>
-<form method="POST">
-    <input type="text" name="search" placeholder="ФИО, телефон или паспорт" required>
-    <button type="submit">Найти</button>
-</form>
+<div class="client-search">
+    <h2>Поиск ваших данных</h2>
+    <form method="POST" class="search-form">
+        <input type="text" name="search" placeholder="ФИО, телефон или паспорт" required>
+        <button type="submit">Найти</button>
+    </form>
 
-{% if clients %}
-    <h3>Результаты поиска:</h3>
-    <ul>
-        {% for client in clients %}
-        <li>
-            {{ client.name }} (тел: {{ client.phone }}, паспорт: {{ client.passport }})
-            <a href="{{ url_for('select_client', client_id=client.id) }}">Выбрать</a>
-        </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+    {% if clients %}
+    <div class="search-results">
+        <h3>Результаты поиска:</h3>
+        <ul class="client-list">
+            {% for client in clients %}
+            <li class="client-item">
+                <div class="client-info">
+                    <div class="client-name">{{ client.name }}</div>
+                    <div class="client-details">
+                        тел: {{ client.phone }}, паспорт: {{ client.passport }}
+                    </div>
+                </div>
+                <a href="{{ url_for('select_client', client_id=client.id) }}" class="select-btn">Выбрать</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
