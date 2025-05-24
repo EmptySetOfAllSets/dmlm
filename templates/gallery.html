@@ -4,9 +4,51 @@
     <h1>Наши номера</h1>
     
     <!-- Карусель -->
+    <div class="carousel-container">
+        <div class="carousel">
+            {% for item in context %}
+                <div class="carousel-slide" style="display: {% if loop.first %}block{% else %}none{% endif %}">
+                    <img src="{{ url_for('static', filename=item.image) }}" 
+                         alt="{{ item.description }}"
+                         class="carousel-image">
+                         
+                    <div class="caption">
+                        <p>{{ item.slogans }}</p>
+                        <h5>{{ item.description }}</h5>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Кнопки управления -->
+        <button class="carousel-btn prev" onclick="moveSlide(-1)">❮</button>
+        <button class="carousel-btn next" onclick="moveSlide(1)">❯</button>
+        
+        <!-- Индикаторы -->
+        <div class="carousel-indicators">
+            {% for i in range(context|length) %}
+                <span class="indicator {% if loop.first %}active{% endif %}" onclick="currentSlide({{ loop.index }})" title="{{ context[i].image }}"></span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Миниатюры -->
+    <div class="thumbnails">
+        {% for item in context %}
+            <img src="{{ url_for('static', filename=item.image) }}" 
+                 alt="{{ item.image }}"
+                 class="thumbnail {% if loop.first %}active{% endif %}"
+                 onclick="currentSlide({{ loop.index }})">
+        {% endfor %}
+    </div>
+
     <script>
         let slideIndex = 1;
-        showSlides(slideIndex);
+        
+        // Инициализация - показываем первый слайд при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            showSlides(slideIndex);
+        });
         
         function moveSlide(n) {
             showSlides(slideIndex += n);
@@ -21,64 +63,32 @@
             const dots = document.getElementsByClassName("indicator");
             const thumbs = document.getElementsByClassName("thumbnail");
             
-            if (n > slides.length) slideIndex = 1;
-            if (n < 1) slideIndex = slides.length;
+            if (n > slides.length) { slideIndex = 1; }
+            if (n < 1) { slideIndex = slides.length; }
             
             // Скрываем все слайды
             for (let i = 0; i < slides.length; i++) {
                 slides[i].style.display = "none";
             }
             
-            // Деактивируем все индикаторы
+            // Деактивируем все индикаторы и миниатюры
             for (let i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-                thumbs[i].className = thumbs[i].className.replace(" active", "");
+                dots[i].classList.remove("active");
+                thumbs[i].classList.remove("active");
             }
             
-            // Показываем текущий слайд
+            // Показываем текущий слайд и активируем элементы управления
             slides[slideIndex-1].style.display = "block";
-            dots[slideIndex-1].className += " active";
-            thumbs[slideIndex-1].className += " active";
+            if (dots.length > 0) dots[slideIndex-1].classList.add("active");
+            if (thumbs.length > 0) thumbs[slideIndex-1].classList.add("active");
         }
+
+        // Для рандомного слайда при загрузке (раскомментировать если нужно)
+        /*
+        document.addEventListener('DOMContentLoaded', function() {
+            slideIndex = Math.floor(Math.random() * {{ context|length }}) + 1;
+            showSlides(slideIndex);
+        });
+        */
     </script>
-    <div class="carousel-container">
-        <div class="carousel">
-            {% for item in context %}
-                <div class="carousel-slide">
-                    <img src="{{ url_for('static', filename=item.image) }}" 
-                         alt="{{ item.description }}"
-                         class="carousel-image">
-                    <div class="caption">
-                        <p>{{item.image}}</p>
-                        <h5>{{item.description}}</h5>
-                    
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        
-        <!-- Кнопки управления -->
-        <button class="carousel-btn prev" onclick="moveSlide(-1)">❮</button>
-        <button class="carousel-btn next" onclick="moveSlide(1)">❯</button>
-        
-        <!-- Индикаторы -->
-        <div class="carousel-indicators">
-            {% for i in range(context|length) %}
-                <span class="indicator" onclick="showSlides(i+1)" title="{{context[i].image}}"></span>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Миниатюры -->
-    <div class="thumbnails">
-        {% for item in context %}
-            <img src="{{ url_for('static', filename=item.image) }}" 
-                 alt="{{ item.image }}"
-                 class="thumbnail"
-                 onclick="currentSlide( loop.index)">
-        {% endfor %}
-    </div>
-
-    <!-- JavaScript для карусели -->
-    
 {% endblock %}

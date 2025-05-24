@@ -631,22 +631,45 @@ def gallery():
     context["images"] = []
     context["descriptions"] = []
     print(images)
-    descriptions = [
-        "",
-        "description",
-        "description2",
-        "description3",
-        "description4",
-        "description5",
-        "description6",
-        "description7",
-        "description8"
-    ]
+    # descriptions = [
+    #     "",
+    #     "description",
+    #     "description2",
+    #     "description3",
+    #     "description4",
+    #     "description5",
+    #     "description6",
+    #     "description7",
+    #     "description8"
+    # ]
     #images_with_descriptions = list(zip(images, descriptions))
+    slogans = [
+        "Ваш идеальный отдых начинается здесь!",
+        "Роскошь, комфорт и безупречный сервис",
+        "Дом вдали от дома - с заботой о вас",
+        "Где каждая деталь создана для вашего удовольствия",
+        "Остановитесь у нас - останетесь довольны!",
+        "Элегантность и уют в каждом номере",
+        "Ваш комфорт - наш главный приоритет",
+        "Не просто отель - опыт, который запомнится",
+        "Идеальное сочетание цены и качества"
+    ]
+
+    room_descriptions = [
+        "Просторный номер 25 м² с панорамным окном, кондиционером и современной мебелью",
+        "Уютный стандартный номер 18 м² с удобной кроватью и рабочей зоной",
+        "Люкс 35 м² с гостиной зоной, мини-баром и премиальным постельным бельем",
+        "Номер категории Делюкс 28 м² с видом на город и просторной ванной комнатой",
+        "Семейный номер 40 м² с двумя спальнями и детской зоной",
+        "Романтический номер с двуспальной кроватью и джакузи",
+        "Бизнес-номер с расширенной рабочей зоной и звукоизоляцией",
+        "Апартаменты 50 м² с кухонной зоной и отдельной гостиной",
+        "Номер с балконом и потрясающим видом на море/горы"
+    ]           
 
     context = [
-            {'image': f'images/rooms/{img}', 'description': desc} 
-            for img, desc in zip(images, descriptions)
+            {'image': f'images/rooms/{img}', 'description': desc, 'slogans': slg} 
+            for img, desc, slg in zip(images, room_descriptions, slogans)
         ]
     
     return render_template('gallery.html', title='Галерея', context=context)

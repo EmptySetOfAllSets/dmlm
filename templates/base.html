@@ -13,6 +13,11 @@
             <div class="logo">
                 <a href="{{ url_for('index') }}"> <span>Отель "Престиж"</span></a>
             </div>
+            <button class="mobile-menu-btn" aria-label="Открыть меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav class="main-nav">
                 <a href="{{ url_for('index') }}" class="{{ 'active' if request.path == url_for('index') }}">Главная</a>
                 <a href="{{ url_for('about') }}" class="{{ 'active' if request.path == url_for('about') }}">О нас</a>
@@ -50,5 +55,30 @@
             </div>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            const nav = document.querySelector('.main-nav');
+            
+            if (menuBtn && nav) {
+                menuBtn.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                    
+                    // Анимация кнопки
+                    const spans = menuBtn.querySelectorAll('span');
+                    if (nav.classList.contains('active')) {
+                        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                        spans[1].style.opacity = '0';
+                        spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+                    } else {
+                        spans.forEach(span => {
+                            span.style.transform = '';
+                            span.style.opacity = '';
+                        });
+                    }
+                });
+            }
+        });
+        </script>
 </body>
 </html>
