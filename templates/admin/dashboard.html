@@ -13,6 +13,9 @@
     <!-- Содержимое вкладок -->
     <div id="rooms" class="tab-content" style="display: block;">
         <h2>Управление номерами</h2>
+        <div>
+            <a href="{{ url_for('add_room') }}" class="btn-primary" style="text-decoration: none; padding: 10px 20px; margin-left: 10px;">+ Добавить номер</a>
+        </div>
         <table class="data-table">
             <thead>
                 <tr>
@@ -124,7 +127,10 @@
 
     <div id="room-types" class="tab-content">
         <h2>Типы номеров</h2>
-        <table class="data-table">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('add_room_type') }}" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">+ Добавить тип номера</a>
+        </div>
+            <table class="data-table">
             <thead>
                 <tr>
                     <th>ID</th>

@@ -121,16 +121,23 @@ def booking_archive():
                          today=today)
 
 # Маршруты для работы с типами номеров
-@app.route('/admin/room_type/add', methods=['POST'])
+@app.route('/admin/room_type/add', methods=['GET', 'POST'])
 @login_required
 def add_room_type():
-    new_type = Room_type(
-        type=request.form.get('type')
-    )
-    db.session.add(new_type)
-    db.session.commit()
-    flash('Тип номера успешно добавлен', 'success')
-    return redirect(url_for('admin_dashboard'))
+    if request.method == 'POST':
+        try:
+            new_type = Room_type(
+                type=request.form.get('type')
+            )
+            db.session.add(new_type)
+            db.session.commit()
+            flash('Тип номера успешно добавлен', 'success')
+            return redirect(url_for('admin_dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при добавлении типа номера: {str(e)}', 'error')
+    
+    return render_template('admin/add_room_type.html')
 
 @app.route('/admin/room_type/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -162,20 +169,76 @@ def delete_room_type(id):
     return redirect(url_for('admin_dashboard'))
 
 # Маршруты для работы с номерами
-@app.route('/admin/room/add', methods=['POST'])
+# @app.route('/admin/room/add', methods=['POST'])
+# @login_required
+# def add_room():
+#     new_room = Room(
+#         number=request.form.get('number'),
+#         type=request.form.get('type'),
+#         price=float(request.form.get('price')),
+#         capacity=int(request.form.get('capacity')),
+#         room_type_id=int(request.form.get('room_type_id'))
+#     )
+#     db.session.add(new_room)
+#     db.session.commit()
+#     flash('Номер успешно добавлен', 'success')
+#     return redirect(url_for('admin_dashboard'))
+
+
+
+# @app.route('/admin/room/add', methods=['GET', 'POST'])
+# @login_required
+# def add_room():
+#     if request.method == 'POST':
+#         try:
+#             new_room = Room(
+#                 number=request.form['number'],
+#                 price=float(request.form['price']),
+#                 capacity=int(request.form['capacity']),
+#                 room_type_id=int(request.form['room_type_id'])
+#             )
+#             db.session.add(new_room)
+#             db.session.commit()
+#             flash('Номер успешно добавлен', 'success')
+#             return redirect(url_for('admin_dashboard'))
+#         except ValueError:
+#             db.session.rollback()
+#             flash('Ошибка в данных. Проверьте правильность ввода', 'error')
+#         except IntegrityError:
+#             db.session.rollback()
+#             flash('Номер с таким номером уже существует', 'error')
+    
+#     room_types = Room_type.query.order_by(Room_type.type).all()
+#     return render_template('admin/add_room.html', room_types=room_types)
+
+@app.route('/admin/room/add', methods=['GET', 'POST'])
 @login_required
 def add_room():
-    new_room = Room(
-        number=request.form.get('number'),
-        type=request.form.get('type'),
-        price=float(request.form.get('price')),
-        capacity=int(request.form.get('capacity')),
-        room_type_id=int(request.form.get('room_type_id'))
-    )
-    db.session.add(new_room)
-    db.session.commit()
-    flash('Номер успешно добавлен', 'success')
-    return redirect(url_for('admin_dashboard'))
+    if request.method == 'POST':
+        try:
+            new_room = Room(
+                number=request.form['number'],
+                price=float(request.form['price']),
+                capacity=int(request.form['capacity']),
+                room_type_id=int(request.form['room_type_id'])
+            )
+            db.session.add(new_room)
+            db.session.commit()
+            flash('Номер успешно добавлен', 'success')
+            return redirect(url_for('admin_dashboard'))
+        except ValueError:
+            db.session.rollback()
+            flash('Ошибка в данных. Проверьте правильность ввода', 'error')
+        except IntegrityError:
+            db.session.rollback()
+            flash('Номер с таким номером уже существует', 'error')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при добавлении номера: {str(e)}', 'error')
+    
+    room_types = Room_type.query.order_by(Room_type.type).all()
+    return render_template('admin/add_room.html', room_types=room_types)
+
 
 @app.route('/admin/booking/add', methods=['GET', 'POST'])
 @login_required
@@ -569,7 +632,7 @@ def gallery():
     context["descriptions"] = []
     print(images)
     descriptions = [
-        "test 1",
+        "",
         "description",
         "description2",
         "description3",
@@ -595,4 +658,4 @@ def api_data():
 
 # Запуск приложения
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

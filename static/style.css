@@ -41,7 +41,9 @@
     font-family: var(--main-font);
     color: var(--text-color);
     line-height: 1.6;
-    background-color: var(--light-color);
+    background-image: url('/static/images/body-bg.jpg');
+    background-repeat: repeat;
+    background-color: #f0f2f5; /* Фон под текстурой */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -201,7 +203,7 @@
   /* ===== Герой-секция ===== */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                url('../images/hero-bg.jpg') center/cover no-repeat;
+                url('../static/images/hero-bg.jpg') center/cover no-repeat;
     color: var(--text-light);
     min-height: 60vh;
     display: flex;
@@ -245,7 +247,10 @@
   /* ===== Особенности ===== */
   .features {
     padding: var(--space-xl) 0;
-    background-color: var(--light-color);
+    /*background-color: var(--light-color);*/
+    background-image: url('/static/images/body-bg.jpg');
+    background-repeat: repeat;
+    background-color: #f0f2f5; /* Фон под текстурой */
   }
   
   .features-grid {

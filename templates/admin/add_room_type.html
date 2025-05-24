@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="admin-tabs-container">
+    <h2>Добавить тип номера</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('add_room_type') }}" class="admin-form">
+        <table class="data-table">
+            <tr>
+                <td width="30%"><label for="type">Название типа:</label></td>
+                <td><input type="text" id="type" name="type" required style="width: 100%; padding: 8px;"></td>
+            </tr>
+        </table>
+        
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn-primary">Добавить</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary" style="margin-left: 10px;">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
