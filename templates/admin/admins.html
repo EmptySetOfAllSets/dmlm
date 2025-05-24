@@ -1,0 +1,34 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="admin-tabs-container">
+    <h2>Управление администраторами</h2>
+    
+    <a href="{{ url_for('add_admin') }}" class="btn-primary" style="text-decoration: none; padding: 10px 20px; margin-bottom: 20px;">+ Добавить администратора</a>
+    
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя пользователя</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admin in admins %}
+            <tr>
+                <td>{{ admin.id }}</td>
+                <td>{{ admin.username }}</td>
+                <td class="actions">
+                    {% if admin.id != current_user.id %}
+                    <a href="{{ url_for('delete_admin', id=admin.id) }}" 
+                       onclick="return confirm('Вы уверены, что хотите удалить этого администратора?')" 
+                       class="btn-delete">🗑️ Удалить</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

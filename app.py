@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import or_, and_, not_, cast, String, func, Integer  # Основные функции
 from sqlalchemy.exc import IntegrityError  # Для обработки ошибок БД
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 # from models import Client, Booking, Room_type, Room, Admin
 
 load_dotenv()
@@ -39,10 +40,27 @@ class Booking(db.Model):
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
 
+# class Admin(UserMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(50), unique=True)
+#     password = db.Column(db.String(100))
+
 class Admin(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(100))
+    password_hash = db.Column(db.String(162))  # Увеличиваем длину для хеша
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,6 +74,71 @@ class Client(db.Model):
 def load_user(user_id):
     return Admin.query.get(int(user_id))
 
+@app.route('/admin/admins')
+@login_required
+def admin_list():
+    admins = Admin.query.all()
+    return render_template('admin/admins.html', admins=admins)
+
+@app.route('/admin/add_admin', methods=['GET', 'POST'])
+@login_required
+def add_admin():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if not username or not password:
+            flash('Все поля обязательны для заполнения', 'error')
+            return redirect(url_for('add_admin'))
+        
+        existing_admin = Admin.query.filter_by(username=username).first()
+        if existing_admin:
+            flash('Администратор с таким именем уже существует', 'error')
+            return redirect(url_for('add_admin'))
+        
+        try:
+            new_admin = Admin(username=username)
+            new_admin.password = password  # Здесь происходит хеширование
+            db.session.add(new_admin)
+            db.session.commit()
+            flash('Новый администратор успешно добавлен', 'success')
+            return redirect(url_for('admin_list'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при добавлении администратора: {str(e)}', 'error')
+    
+    return render_template('admin/add_admin.html')
+
+@app.route('/admin/delete_admin/<int:id>')
+@login_required
+def delete_admin(id):
+    if current_user.id == id:
+        flash('Вы не можете удалить себя', 'error')
+        return redirect(url_for('admin_list'))
+    
+    admin = Admin.query.get_or_404(id)
+    try:
+        db.session.delete(admin)
+        db.session.commit()
+        flash('Администратор успешно удален', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при удалении администратора: {str(e)}', 'error')
+    
+    return redirect(url_for('admin_list'))
+
+# @app.route('/admin/login', methods=['GET', 'POST'])
+# def admin_login():
+#     if request.method == 'POST':
+#         username = request.form.get('username')
+#         password = request.form.get('password')
+#         admin = Admin.query.filter_by(username=username).first()
+        
+#         if admin and admin.password == password:  # В реальном приложении используйте хеширование!
+#             login_user(admin)
+#             return redirect(url_for('admin_dashboard'))
+#         flash('Неверные учетные данные', 'error')
+#     return render_template('admin/login.html')
 
 
 @app.route('/admin/login', methods=['GET', 'POST'])
@@ -65,11 +148,12 @@ def admin_login():
         password = request.form.get('password')
         admin = Admin.query.filter_by(username=username).first()
         
-        if admin and admin.password == password:  # В реальном приложении используйте хеширование!
+        if admin and admin.verify_password(password):
             login_user(admin)
             return redirect(url_for('admin_dashboard'))
         flash('Неверные учетные данные', 'error')
     return render_template('admin/login.html')
+
 
 @app.route('/admin')
 @login_required

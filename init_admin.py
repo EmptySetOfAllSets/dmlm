@@ -1,16 +1,24 @@
 from app import app, db, Admin, Client, Room, Room_type, Booking
 
+
 # with app.app_context():
 #     admin = Admin(username='admin', password='admin123')  # В продакшене используйте сложный пароль!
 #     db.session.add(admin)
 #     db.session.commit()
 #     print("Администратор создан")
-
+name = input("Введите имя администратора: ")
+password = input("Задайте пароль: ")
 with app.app_context():
     db.drop_all()
     db.create_all()
-    admin = Admin(username='admin', password='admin123')  # В продакшене используйте сложный пароль!
-    db.session.add(admin)
+    db.session.commit()
+    # admin = Admin(username='admin', password='admin123')  # В продакшене используйте сложный пароль!
+    # db.session.add(admin)
+    # db.session.commit()
+    print (len('scrypt:32768:8:1$TYRzuD3hWVcgerbE$7397809d0219c4c1edcf81ae8c82e2aafce7beb16942703948371c09cc2143cc967eceb77867408d1ad36489edd8cfe5de22b1c9e17999c1cd299142e6b22dfd'))
+    new_admin = Admin(username=name)
+    new_admin.password = password  # Здесь происходит хеширование
+    db.session.add(new_admin)
     db.session.commit()
     print("Администратор создан")
 
