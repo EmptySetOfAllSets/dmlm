@@ -1169,7 +1169,7 @@
   }
 }
 
-/* Добавить в static/style.css */
+
 /* ===== Страница подтверждения бронирования ===== */
 .confirmation-container {
   display: flex;
@@ -1298,5 +1298,57 @@
   .detail-label,
   .detail-value {
     text-align: center;
+  }
+}
+/* Стили для страницы о гостинице */
+/* Стили для страницы о гостинице */
+.about-hotel-container {
+  background-color: transparent;
+}
+
+.hotel-main-image {
+  height: 400px;
+  object-fit: cover;
+}
+
+.feature-card {
+  transition: var(--transition);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--warning);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  border: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.btn-warning:hover {
+  background-color: #ffab00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+.text-light {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+  .hotel-main-image {
+      height: 300px;
+  }
+  
+  .display-4 {
+      font-size: 2.5rem;
+  }
+  
+  .pe-lg-5 {
+      padding-right: 0 !important;
   }
 }

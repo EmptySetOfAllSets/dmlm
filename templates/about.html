@@ -1,8 +1,75 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>О нашей гостинице</h1>
-    <img src="static/images/back.avif" 
-                         class="carousel-image">
-    <p>Пр. Победителей, 1/2 Минск".</p>
+<div class="container about-hotel-container py-5">
+    <div class="row align-items-center">
+        <!-- Блок с текстом -->
+        <div class="col-lg-6 mb-4 mb-lg-0 pe-lg-5">
+            <h1 class="display-4 mb-4 text-white">О нашей гостинице</h1>
+            <p class="lead mb-4 text-light">Мы предлагаем комфортабельные номера и высокий уровень сервиса в самом сердце Минска.</p>
+            
+            <div class="hotel-info bg-dark bg-opacity-75 p-4 rounded">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-geo-alt-fill fs-3 text-warning me-3"></i>
+                    <div>
+                        <h3 class="h5 mb-1 text-white">Адрес</h3>
+                        <p class="mb-0 text-light">Пр. Победителей, 1/2, Минск</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-telephone-fill fs-3 text-warning me-3"></i>
+                    <div>
+                        <h3 class="h5 mb-1 text-white">Телефон</h3>
+                        <p class="mb-0 text-light">+375 (17) 123-45-67</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-envelope-fill fs-3 text-warning me-3"></i>
+                    <div>
+                        <h3 class="h5 mb-1 text-white">Email</h3>
+                        <p class="mb-0 text-light">info@hotel-example.by</p>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="{{ url_for('booking_start') }}" class="btn btn-warning mt-4 px-4 py-2">
+                <i class="bi bi-calendar-check"></i> Забронировать номер
+            </a>
+        </div>
+        
+        <!-- Блок с фото -->
+        <div class="col-lg-6">
+            <div class="hotel-image-wrapper rounded-3 overflow-hidden border border-3 border-warning">
+                <img src="/static/images/back.avif" alt="Наша гостиница" class="img-fluid w-100 hotel-main-image">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Дополнительная информация -->
+    <div class="row mt-5 pt-4">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4 h-100 text-center bg-dark bg-opacity-75 rounded">
+                <i class="bi bi-wifi fs-1 text-warning mb-3"></i>
+                <h3 class="text-white">Бесплатный Wi-Fi</h3>
+                <p class="text-light">Высокоскоростной интернет во всех номерах</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4 h-100 text-center bg-dark bg-opacity-75 rounded">
+                <i class="bi bi-cup-hot fs-1 text-warning mb-3"></i>
+                <h3 class="text-white">Ресторан</h3>
+                <p class="text-light">Завтраки "шведский стол" от шеф-повара</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4 h-100 text-center bg-dark bg-opacity-75 rounded">
+                <i class="bi bi-parking fs-1 text-warning mb-3"></i>
+                <h3 class="text-white">Парковка</h3>
+                <p class="text-light">Охраняемая парковка для гостей</p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
